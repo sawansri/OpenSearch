@@ -8,40 +8,31 @@
 
 package org.opensearch.search.approximate;
 
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.QueryVisitor;
 import org.opensearch.search.internal.SearchContext;
-import org.apache.lucene.document.LongPoint;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.PointValues;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.PointRangeQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.QueryVisitor;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScorerSupplier;
-import org.apache.lucene.search.Weight;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.DocIdSetBuilder;
-import org.apache.lucene.util.IntsRef;
-import org.opensearch.search.internal.SearchContext;
-import org.opensearch.search.sort.FieldSortBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.function.Function;
+import java.util.List;
 
-public class ApproximateBooleanQuery extends ApproximateQuery{
+public class ApproximateBooleanQuery extends ApproximateQuery {
 
-    public final BooleanQuery boolQuery = null;
+    public BooleanQuery boolQuery = null;
 
     private int size;
+
+    private SortOrder sortOrder;
+
+    public ApproximateBooleanQuery(int minimumNumberShouldMatch, BooleanClause[] clauses) {
+        this(minimumNumberShouldMatch, clauses, SearchContext.DEFAULT_TRACK_TOTAL_HITS_UP_TO, null);
+    }
+
+    protected ApproximateBooleanQuery(int minimumNumberShouldMatch, BooleanClause[] clauses, int size, SortOrder sortOrder) {
+        this.size = size;
+        this.sortOrder = sortOrder;
+        this.boolQuery = new BooleanQuery.Builder().add(List.of(clauses)).build();
+    }
 
     @Override
     protected boolean canApproximate(SearchContext context) {
@@ -52,6 +43,22 @@ public class ApproximateBooleanQuery extends ApproximateQuery{
             return false;
         }
         return false;
+    }
+
+    public int getSize() {
+        return this.size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public SortOrder getSortOrder() {
+        return this.sortOrder;
+    }
+
+    public void setSortOrder(SortOrder sortOrder) {
+        this.sortOrder = sortOrder;
     }
 
     @Override
