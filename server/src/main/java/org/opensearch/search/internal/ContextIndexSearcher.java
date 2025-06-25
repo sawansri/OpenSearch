@@ -38,28 +38,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BulkScorer;
-import org.apache.lucene.search.CollectionStatistics;
-import org.apache.lucene.search.CollectionTerminatedException;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.CollectorManager;
-import org.apache.lucene.search.ConjunctionUtils;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.QueryCache;
-import org.apache.lucene.search.QueryCachingPolicy;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScorerSupplier;
-import org.apache.lucene.search.TermStatistics;
-import org.apache.lucene.search.TopFieldDocs;
-import org.apache.lucene.search.TotalHits;
-import org.apache.lucene.search.Weight;
+import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.util.BitSet;
 import org.apache.lucene.util.BitSetIterator;
@@ -193,6 +172,12 @@ public class ContextIndexSearcher extends IndexSearcher implements Releasable {
     public Query rewrite(Query original) throws IOException {
         if (original instanceof ApproximateScoreQuery) {
             ((ApproximateScoreQuery) original).setContext(searchContext);
+        } else if (original instanceof BooleanQuery) {
+            for (Query clause: ((BooleanQuery) original).getClauses(BooleanClause.Occur.FILTER)){
+                if (clause instanceof ApproximateScoreQuery){
+                    ((ApproximateScoreQuery) clause).setContext(searchContext);
+                }
+            }
         }
         if (profiler != null) {
             profiler.startRewriteTime();
