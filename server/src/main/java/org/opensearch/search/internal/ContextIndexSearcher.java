@@ -38,6 +38,8 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BulkScorer;
 import org.apache.lucene.search.CollectionStatistics;
 import org.apache.lucene.search.CollectionTerminatedException;
@@ -60,8 +62,6 @@ import org.apache.lucene.search.TermStatistics;
 import org.apache.lucene.search.TopFieldDocs;
 import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.search.Weight;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.util.BitSet;
 import org.apache.lucene.util.BitSetIterator;
@@ -196,8 +196,8 @@ public class ContextIndexSearcher extends IndexSearcher implements Releasable {
         if (original instanceof ApproximateScoreQuery) {
             ((ApproximateScoreQuery) original).setContext(searchContext);
         } else if (original instanceof BooleanQuery) {
-            for (Query clause: ((BooleanQuery) original).getClauses(BooleanClause.Occur.FILTER)){
-                if (clause instanceof ApproximateScoreQuery){
+            for (Query clause : ((BooleanQuery) original).getClauses(BooleanClause.Occur.FILTER)) {
+                if (clause instanceof ApproximateScoreQuery) {
                     ((ApproximateScoreQuery) clause).setContext(searchContext);
                 }
             }
