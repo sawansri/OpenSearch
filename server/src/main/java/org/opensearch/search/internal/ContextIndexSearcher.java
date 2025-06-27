@@ -358,7 +358,12 @@ public class ContextIndexSearcher extends IndexSearcher implements Releasable {
         Bits liveDocs = ctx.reader().getLiveDocs();
         BitSet liveDocsBitSet = getSparseBitSetOrNull(liveDocs);
         if (liveDocsBitSet == null) {
-            BulkScorer bulkScorer = weight.bulkScorer(ctx);
+           BulkScorer bulkScorer = weight.bulkScorer(ctx);
+//            if ((searchContext.query().getClass() instanceof BooleanQuery) && !((BooleanQuery) searchContext.query()).getClauses(BooleanClause.Occur.FILTER).isEmpty()) {
+//               bulkScorer = weight.bulkScorer(ctx);
+//            } else {
+//                bulkScorer = weight.bulkScorer(ctx);
+//            }
             if (bulkScorer != null) {
                 try {
                     bulkScorer.score(leafCollector, liveDocs, minDocId, maxDocId);
