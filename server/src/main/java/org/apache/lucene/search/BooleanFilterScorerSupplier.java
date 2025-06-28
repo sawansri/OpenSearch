@@ -9,7 +9,6 @@
 package org.apache.lucene.search;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 public class BooleanFilterScorerSupplier extends ScorerSupplier {
@@ -30,11 +29,7 @@ public class BooleanFilterScorerSupplier extends ScorerSupplier {
     }
 
     public BulkScorer bulkScorer() {
-        long filterLeadCost =
-            subs.stream()
-                .mapToLong(ScorerSupplier::cost)
-                .min()
-                .orElse(Long.MAX_VALUE);
+        long filterLeadCost = subs.stream().mapToLong(ScorerSupplier::cost).min().orElse(Long.MAX_VALUE);
         return null;
     }
 }
