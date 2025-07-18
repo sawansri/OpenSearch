@@ -57,6 +57,8 @@ public class ApproximatePointRangeQuery extends ApproximateQuery {
 
     public final PointRangeQuery pointRangeQuery;
 
+    private ResumableDISI.BKDState state;
+
     public ApproximatePointRangeQuery(
         String field,
         byte[] lowerPoint,
